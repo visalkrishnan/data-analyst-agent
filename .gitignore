@@ -1,0 +1,14 @@
+# Ignore Secrets
+.env
+
+# Ignore Python Cache
+__pycache__/
+*.pyc
+venv/
+env/
+
+# Ignore Databases & Vector Stores
+data/dataset.db
+data/faiss_index/
+temp/
+temp_uploads/
