@@ -1,40 +1,82 @@
-📊 Agentic Data Analyst (LangGraph + DuckDB)
-![alt text](https://img.shields.io/badge/Python-3.11-blue.svg)
-![alt text](https://img.shields.io/badge/LangGraph-v1-brightgreen.svg)
-![alt text](https://img.shields.io/badge/DuckDB-Fast%20OLAP-yellow.svg)
-![alt text](https://img.shields.io/badge/FastAPI-API-green.svg)
-📖 Project Overview
-This project is an intelligent Text-to-SQL AI Assistant. It allows users to upload large structured datasets (CSV or Excel files) and ask natural language questions about them.
-Instead of struggling with context window limits or hallucinated math, this system uses DuckDB to execute real SQL queries. A team of AI agents orchestrated by LangGraph works together to understand the question, fix typos in the user's prompt, write the SQL code, execute it, fix its own errors, and return a plain English answer.
-🏗️ System Architecture
-The workflow uses a multi-agent state machine. Here is how the agents collaborate to solve a user's question:
-code
-Mermaid
-graph TD
-    %% Nodes
-    START((User Query))
-    Router["Agent 1: Router<br/><i>(Is this a data question?)</i>"]
-    Mapper["Agent 2: Mapper<br/><i>(Fixes typos & matches names)</i>"]
-    SQL["Agent 3: SQL Architect<br/><i>(Writes DuckDB SQL)</i>"]
-    Executor{"Tool: DB Executor<br/><i>(Runs SQL on DuckDB)</i>"}
-    Synthesizer["Agent 4: Synthesizer<br/><i>(Writes the final answer)</i>"]
-    END((Final Response))
+# 📊 Agentic Data Analyst (LangGraph + DuckDB)
 
-    %% Flow
-    START --> Router
-    Router -- "General Chat" --> Synthesizer
-    Router -- "Database Query" --> Mapper
+![Python](https://img.shields.io/badge/Python-3.11-blue.svg) ![LangGraph](https://img.shields.io/badge/LangGraph-v1-brightgreen.svg) ![DuckDB](https://img.shields.io/badge/DuckDB-Fast%20OLAP-yellow.svg) ![FastAPI](https://img.shields.io/badge/FastAPI-API-green.svg)
+
+## 📖 Project Overview
+
+This project is an intelligent **Text-to-SQL AI Assistant**. It allows users to upload large structured datasets (CSV or Excel files) and ask natural language questions about them. 
+
+Instead of struggling with context window limits or hallucinated math, this system uses **DuckDB** to execute real SQL queries. A team of AI agents orchestrated by **LangGraph** works together to understand the question, fix typos in the user's prompt, write the SQL code, execute it, fix its own errors, and return a plain English answer.
+
+---
+
+## 🏗️ System Architecture
+
+The workflow uses a multi-agent state machine. Here is how the agents collaborate to solve a user's question:
+
+```mermaid
+graph TD
+    START((User Query)) --> Router["Agent 1: Router<br/><i>(Is this a data question?)</i>"]
     
-    Mapper --> SQL
-    SQL --> Executor
+    Router -- "General Chat" --> Synthesizer["Agent 4: Synthesizer<br/><i>(Writes the final answer)</i>"]
+    Router -- "Database Query" --> Mapper["Agent 2: Mapper<br/><i>(Fixes typos & matches names)</i>"]
     
-    %% Self-Correction Loop
+    Mapper --> SQL["Agent 3: SQL Architect<br/><i>(Writes DuckDB SQL)</i>"]
+    SQL --> Executor{"Tool: DB Executor<br/><i>(Runs SQL on DuckDB)</i>"}
+    
     Executor -- "SQL Error (Retry up to 3x)" --> SQL
     Executor -- "Success" --> Synthesizer
     
-    Synthesizer --> END
+    Synthesizer --> END((Final Response))
 
-    %% Styling
+    style Executor fill:#f9f,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
+    style Router fill:#bbf,stroke:#333,stroke-width:2px
+    style Mapper fill:#bbf,stroke:#333,stroke-width:2px
+    style SQL fill:#bbf,stroke:#333,stroke-width:2px
+    style Synthesizer fill:#bfb,stroke:#333,stroke-width:2px
+
+
+    
+If your README.md is looking like one giant block of code or the headers aren't showing up correctly, it is usually because the hidden "markdown" backticks (```) got copied by mistake, or there are missing blank lines.
+Here is the perfectly formatted version.
+Instructions:
+Open your README.md file.
+Delete everything currently in it.
+Click the "Copy" button at the top right of the code block below.
+Paste it into your file and save.
+code
+Markdown
+# 📊 Agentic Data Analyst (LangGraph + DuckDB)
+
+![Python](https://img.shields.io/badge/Python-3.11-blue.svg) ![LangGraph](https://img.shields.io/badge/LangGraph-v1-brightgreen.svg) ![DuckDB](https://img.shields.io/badge/DuckDB-Fast%20OLAP-yellow.svg) ![FastAPI](https://img.shields.io/badge/FastAPI-API-green.svg)
+
+## 📖 Project Overview
+
+This project is an intelligent **Text-to-SQL AI Assistant**. It allows users to upload large structured datasets (CSV or Excel files) and ask natural language questions about them. 
+
+Instead of struggling with context window limits or hallucinated math, this system uses **DuckDB** to execute real SQL queries. A team of AI agents orchestrated by **LangGraph** works together to understand the question, fix typos in the user's prompt, write the SQL code, execute it, fix its own errors, and return a plain English answer.
+
+---
+
+## 🏗️ System Architecture
+
+The workflow uses a multi-agent state machine. Here is how the agents collaborate to solve a user's question:
+
+```mermaid
+graph TD
+    START((User Query)) --> Router["Agent 1: Router<br/><i>(Is this a data question?)</i>"]
+    
+    Router -- "General Chat" --> Synthesizer["Agent 4: Synthesizer<br/><i>(Writes the final answer)</i>"]
+    Router -- "Database Query" --> Mapper["Agent 2: Mapper<br/><i>(Fixes typos & matches names)</i>"]
+    
+    Mapper --> SQL["Agent 3: SQL Architect<br/><i>(Writes DuckDB SQL)</i>"]
+    SQL --> Executor{"Tool: DB Executor<br/><i>(Runs SQL on DuckDB)</i>"}
+    
+    Executor -- "SQL Error (Retry up to 3x)" --> SQL
+    Executor -- "Success" --> Synthesizer
+    
+    Synthesizer --> END((Final Response))
+
     style Executor fill:#f9f,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5
     style Router fill:#bbf,stroke:#333,stroke-width:2px
     style Mapper fill:#bbf,stroke:#333,stroke-width:2px
@@ -59,17 +101,21 @@ Purpose: Translates raw database rows into a human-friendly sentence.
 Logic: It takes the raw JSON/Number from the database (e.g., [{"Total": 5000}]) and replies to the user: "The total revenue was $5,000."
 🚀 Setup & Installation
 Prerequisites: Docker and Docker Compose installed on your machine.
-Clone the repository and enter the directory.
-Create the environment file:
+1. Clone the repository and enter the directory:
+code
+Bash
+git clone https://github.com/YOUR_USERNAME/data-analyst-agent.git
+cd data-analyst-agent
+2. Create the environment file:
 Copy the example file and add your Azure OpenAI keys.
 code
 Bash
 cp .env.example .env
-Build and start the application:
+3. Build and start the application:
 code
 Bash
 docker-compose up --build
-Access the API Documentation:
+4. Access the API Documentation:
 Open your browser and navigate to: http://localhost:8080/docs
 ⚡ Usage Example
 Step 1: Upload your Data (Ingest)
@@ -89,3 +135,11 @@ JSON
   "answer": "The total revenue for Apple Inc. in 2024 was $383 Billion USD.",
   "generated_sql": "SELECT SUM(Revenue) FROM dataset WHERE Company_Name = 'Apple Inc.' AND Year = 2024;"
 }
+code
+Code
+### What was likely wrong before?
+1. Sometimes Mermaid diagrams break GitHub's renderer if the lines inside the diagram contain weird spacing or missing quotes. I simplified the Mermaid syntax in this version so GitHub renders it flawlessly.
+2. Make sure there is an empty line before and after the ```mermaid block.
+3. Make sure there is an empty line before and after lists (like step 1, step 2).
+
+Push this to GitHub (`git add README.md`, `git commit -m "fix readme"`, `git push`), and it will look perfect.
